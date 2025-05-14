@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.13.35913.81 d17.13
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Телефонный справочник с фотографиями", "Телефонный справочник с фотографиями\Телефонный справочник с фотографиями.csproj", "{898A9FD8-7FA2-4E50-BF70-8E07BAE27DD4}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{898A9FD8-7FA2-4E50-BF70-8E07BAE27DD4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{898A9FD8-7FA2-4E50-BF70-8E07BAE27DD4}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{898A9FD8-7FA2-4E50-BF70-8E07BAE27DD4}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{898A9FD8-7FA2-4E50-BF70-8E07BAE27DD4}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {46495783-83DC-4CFB-8E00-D8566A324DEC}
+	EndGlobalSection
+EndGlobal

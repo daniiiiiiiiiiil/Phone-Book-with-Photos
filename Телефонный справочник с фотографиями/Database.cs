@@ -1,9 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data.SQLite;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace Телефонный_справочник_с_фотографиями
@@ -11,29 +8,32 @@ namespace Телефонный_справочник_с_фотографиями
     internal class Database
     {
         private SQLiteConnection connection;
-        public Database(string db)
+
+        public Database(string dbPath)
         {
-            connection = new SQLiteConnection($"Data Source={db};Vercion=3");
+            connection = new SQLiteConnection($"Data Source={dbPath};Version=3");
             connection.Open();
+            CreateDataBase();
         }
-        private void CreateDataBase()
+
+        public void CreateDataBase()
         {
             try
             {
                 string create = @"CREATE TABLE IF NOT EXISTS Phone(
                                  ID INTEGER PRIMARY KEY AUTOINCREMENT,
-                                 PhoneNumber Text Not Null,
-                                 FirstName Text Not Null,
-                                 LastName Text,
-                                 Photo text)";
+                                 PhoneNumber TEXT NOT NULL,
+                                 FirstName TEXT NOT NULL,
+                                 LastName TEXT,
+                                 Photo BLOB)";
                 Execute(create);
             }
             catch (Exception ex)
             {
                 MessageBox.Show($"Ошибка при создании таблицы: {ex.Message}");
             }
-            
         }
+
         private void Execute(string query)
         {
             using (var command = new SQLiteCommand(query, connection))
@@ -41,6 +41,7 @@ namespace Телефонный_справочник_с_фотографиями
                 command.ExecuteNonQuery();
             }
         }
+
         public List<PhoneItem> GetAllPhones()
         {
             List<PhoneItem> phones = new List<PhoneItem>();
@@ -55,10 +56,15 @@ namespace Телефонный_справочник_с_фотографиями
                         while (reader.Read())
                         {
                             int id = reader.GetInt32(0);
-                            string phoneNumber = reader["PhoneNumber"] != DBNull.Value ? reader["PhoneNumber"].ToString() : "";
-                            string firstName = reader["FirstName"] != DBNull.Value ? reader["FirstName"].ToString() : "";
+                            string phoneNumber = reader["PhoneNumber"].ToString();
+                            string firstName = reader["FirstName"].ToString();
                             string lastName = reader["LastName"] != DBNull.Value ? reader["LastName"].ToString() : "";
-                            byte[] photo = reader["Photo"] != DBNull.Value ? (byte[])reader["Photo"] : null;
+
+                            byte[] photo = null;
+                            if (reader["Photo"] != DBNull.Value)
+                            {
+                                photo = (byte[])reader["Photo"];
+                            }
 
                             phones.Add(new PhoneItem(id, phoneNumber, firstName, lastName, photo));
                         }
@@ -77,26 +83,22 @@ namespace Телефонный_справочник_с_фотографиями
         {
             try
             {
-                string add = @"INSERT INTO Phone(PhoneNumber,FirstName,LastName,Photo) VALUES (@Num,@Fname,@Lname,@Pho)";
-                using (var connection = new SQLiteConnection("Data Source=Phone.db"))
+                string add = @"INSERT INTO Phone(PhoneNumber, FirstName, LastName, Photo) VALUES (@Num, @Fname, @Lname, @Pho)";
+                using (var command = new SQLiteCommand(add, connection))
                 {
-                    connection.Open();
-                    using (var command = new SQLiteCommand(add, connection))
-                    {
-                        command.Parameters.AddWithValue("@Num", phoneItem.PhoneNumber);
-                        command.Parameters.AddWithValue("@Fname", phoneItem.FirstName);
-                        command.Parameters.AddWithValue("@Lname", phoneItem.LastName);
-                        command.Parameters.AddWithValue("@Pho", phoneItem.Photo ?? (object)DBNull.Value);
-                        command.ExecuteNonQuery();
-                    }
+                    command.Parameters.AddWithValue("@Num", phoneItem.PhoneNumber);
+                    command.Parameters.AddWithValue("@Fname", phoneItem.FirstName);
+                    command.Parameters.AddWithValue("@Lname", phoneItem.LastName);
+                    command.Parameters.AddWithValue("@Pho", (object)phoneItem.Photo ?? DBNull.Value);
+                    command.ExecuteNonQuery();
                 }
                 MessageBox.Show("Контакт успешно добавлен!");
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Ошибка при добавлении задачи: {ex.Message}");
+                MessageBox.Show($"Ошибка при добавлении: {ex.Message}");
             }
         }
+
     }
 }
-

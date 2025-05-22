@@ -139,14 +139,69 @@ namespace Телефонный_справочник_с_фотографиями
 
         private void BtnEdit_Click(object sender, EventArgs e)
         {
-            MessageBox.Show("Запись отредактирована");
-            RefreshContactList();
-        }
+            if (listContacts.SelectedIndex >= 0 && !string.IsNullOrEmpty(knopki.txtId.Text))
+            {
+                try
+                {
+                    var updatedContact = new PhoneItem
+                    {
+                        Id = int.Parse(knopki.txtId.Text),
+                        PhoneNumber = knopki.txtPhone.Text,
+                        FirstName = knopki.txtFirstName.Text,
+                        LastName = knopki.txtLastName.Text,
+                        Photo = selectedPhotoBytes
+                    };
 
+                    db.EditPhone(updatedContact);
+                    RefreshContactList();
+
+                    selectedPhotoBytes = null;
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show($"Ошибка при редактировании: {ex.Message}");
+                }
+            }
+            else
+            {
+                MessageBox.Show("Выберите контакт для редактирования");
+            }
+        }
+        private void ClearFields()
+        {
+            knopki.txtId.Clear();
+            knopki.txtPhone.Clear();
+            knopki.txtFirstName.Clear();
+            knopki.txtLastName.Clear();
+            knopki.pictureBox.Image = null;
+            selectedPhotoBytes = null;
+        }
         private void BtnDelete_Click(object sender, EventArgs e)
         {
-            MessageBox.Show("Запись удалена");
-            RefreshContactList();
+            if (listContacts.SelectedIndex >= 0 && !string.IsNullOrEmpty(knopki.txtId.Text))
+            {
+                try
+                {
+                    int id = int.Parse(knopki.txtId.Text);
+
+                    if (MessageBox.Show("Вы уверены, что хотите удалить этот контакт?",
+                        "Подтверждение удаления",
+                        MessageBoxButtons.YesNo) == DialogResult.Yes)
+                    {
+                        db.DeletePhone(id);
+                        RefreshContactList();
+                        ClearFields();
+                    }
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show($"Ошибка при удалении: {ex.Message}");
+                }
+            }
+            else
+            {
+                MessageBox.Show("Выберите контакт для удаления");
+            }
         }
     }
 }

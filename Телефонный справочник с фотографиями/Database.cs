@@ -99,6 +99,52 @@ namespace Телефонный_справочник_с_фотографиями
                 MessageBox.Show($"Ошибка при добавлении: {ex.Message}");
             }
         }
+        public void EditPhone(PhoneItem phoneItem)
+        {
+            try
+            {
+                string update = @"UPDATE Phone SET 
+                        PhoneNumber = @Num,
+                        FirstName = @Fname,
+                        LastName = @Lname,
+                        Photo = @Pho
+                        WHERE ID = @Id";
 
+                using (var command = new SQLiteCommand(update, connection))
+                {
+                    command.Parameters.AddWithValue("@Num", phoneItem.PhoneNumber);
+                    command.Parameters.AddWithValue("@Fname", phoneItem.FirstName);
+                    command.Parameters.AddWithValue("@Lname", phoneItem.LastName);
+                    command.Parameters.AddWithValue("@Pho", (object)phoneItem.Photo ?? DBNull.Value);
+                    command.Parameters.AddWithValue("@Id", phoneItem.Id);
+
+                    command.ExecuteNonQuery();
+                }
+                MessageBox.Show("Контакт успешно обновлен!");
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Ошибка при редактировании контакта: {ex.Message}");
+            }
+        }
+
+        public void DeletePhone(int id)
+        {
+            try
+            {
+                string delete = "DELETE FROM Phone WHERE ID = @Id";
+
+                using (var command = new SQLiteCommand(delete, connection))
+                {
+                    command.Parameters.AddWithValue("@Id", id);
+                    command.ExecuteNonQuery();
+                }
+                MessageBox.Show("Контакт успешно удален!");
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Ошибка при удалении контакта: {ex.Message}");
+            }
+        }
     }
 }
